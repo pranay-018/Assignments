@@ -1,0 +1,113 @@
+1NF & 2NF Normalization Assignment 
+
+-----------------------------------
+Q1. 
+StudentID | Name  | PhoneNumber
+101       | Ravi  | 98765
+101       | Ravi  | 87654
+102       | Anita | 99900
+103       | John  | 88888
+103       | John  | 77777
+103       | John  | 66666
+
+-----------------------------------
+Q2. 
+OrderID | Customer | Item
+O1      | Raj      | Pen
+O1      | Raj      | Pencil
+O2      | Sam      | Notebook
+O3      | Raj      | Eraser
+O3      | Raj      | Marker
+O3      | Raj      | Pen
+
+-----------------------------------
+Q3.
+EmpID | EmpName | Skill
+1     | Ramesh  | Java
+1     | Ramesh  | Python
+2     | Anita   | Excel
+3     | John    | C++
+3     | John    | Java
+3     | John    | HTML
+
+-----------------------------------
+Q4. 
+CustID | Name  | City      | State       | Country
+1      | Meera | Hyderabad | Telangana   | India
+2      | Ajay  | Pune      | Maharashtra | India
+
+-----------------------------------
+Q5. 
+StudentID | StudentName
+1         | Ramesh
+2         | Anita
+CourseID | CourseName | Faculty
+C1       | Java       | Amit
+C2       | Python     | Seema
+StudentID | CourseID | Marks
+1         | C1       | 90
+1         | C2       | 85
+2         | C1       | 78
+
+-----------------------------------
+Q6. 
+OrderID | CustomerName
+O1      | Raj
+O2      | Meena
+ProductID | ProductName
+P1        | Pen
+P2        | Pencil
+OrderID | ProductID | Quantity
+O1      | P1        | 2
+O1      | P2        | 1
+O2      | P1        | 3
+
+-----------------------------------
+Q7.
+EmpID | EmpName
+1     | Ravi
+2     | Anita
+ProjectID | ProjectName
+P1        | WebApp
+P2        | MobileApp
+EmpID | ProjectID | HoursWorked
+1     | P1        | 20
+1     | P2        | 30
+2     | P1        | 25
+
+-----------------------------------
+Q8. 2NF – Drivers, Routes, DriverRoutes
+DriverID | DriverName
+D1       | Amit
+D2       | Sunil
+Routes:
+RouteID | RouteName     | Distance
+R1      | Airport Route | 40 km
+R2      | City Route    | 20 km
+
+DriverID | RouteID
+D1       | R1
+D1       | R2
+D2       | R1
+
+-----------------------------------
+Q9. 
+Orders:
+OrderID | CustomerName | City
+O1      | Ravi         | Mumbai
+O2      | Meena        | Delhi
+
+Products:
+ProductID | ProductName | Price
+P1        | Pen         | 10
+P2        | Book        | 100
+P3        | Bag         | 500
+
+OrderItems:
+OrderLineID | OrderID | ProductID | Quantity
+1           | O1      | P1        | 2
+2           | O1      | P1        | 3
+3           | O2      | P2        | 1
+4           | O2      | P3        | 1
+5           | O2      | P3        | 2
+
