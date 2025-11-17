@@ -76,11 +76,11 @@ EmpID | ProjectID | HoursWorked
 2     | P1        | 25
 
 -----------------------------------
-Q8. 2NF – Drivers, Routes, DriverRoutes
+Q8. 
 DriverID | DriverName
 D1       | Amit
 D2       | Sunil
-Routes:
+
 RouteID | RouteName     | Distance
 R1      | Airport Route | 40 km
 R2      | City Route    | 20 km
@@ -92,22 +92,23 @@ D2       | R1
 
 -----------------------------------
 Q9. 
-Orders:
+
 OrderID | CustomerName | City
 O1      | Ravi         | Mumbai
 O2      | Meena        | Delhi
 
-Products:
+
 ProductID | ProductName | Price
 P1        | Pen         | 10
 P2        | Book        | 100
 P3        | Bag         | 500
 
-OrderItems:
+
 OrderLineID | OrderID | ProductID | Quantity
 1           | O1      | P1        | 2
 2           | O1      | P1        | 3
 3           | O2      | P2        | 1
 4           | O2      | P3        | 1
 5           | O2      | P3        | 2
+
 
