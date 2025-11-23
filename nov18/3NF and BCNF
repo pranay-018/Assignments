@@ -1,0 +1,285 @@
+Part A – 3NF Practice Questions
+Question 1 — Student–Department Table
+Given table (example rows)
+STUDENT_INFO(stud_id, stud_name, dept_id, dept_name, hod_id, hod_name)
+
+Sample rows:
+(101, 'Asha', 10, 'CSE', 900, 'Dr. Rao')
+(102, 'Vikram', 10, 'CSE', 900, 'Dr. Rao')
+(103, 'Leena', 20, 'ECE', 910, 'Dr. Menon')
+Functional Dependencies (given)
+•	stud_id → stud_name, dept_id
+•	dept_id → dept_name, hod_id
+•	hod_id → hod_name
+1. Candidate keys
+•	stud_id is a candidate key (it determines stud_name and dept_id, and through dept_id/hod_id transitively all other attributes). So primary key: stud_id.
+2. Partial & Transitive dependencies
+•	Since PK is single attribute stud_id, there are no partial dependencies (partial dependencies occur when a composite key exists).
+•	Transitive dependencies:
+o	stud_id → dept_id and dept_id → dept_name,hod_id, hence
+stud_id → dept_name and stud_id → hod_id (transitive).
+o	hod_id → hod_name so stud_id → hod_name (transitive via dept_id then hod_id).
+3. Normalize: 1NF → 2NF → 3NF
+•	1NF: given (atomic attributes) — already 1NF.
+•	2NF: since PK is single attribute, 2NF holds.
+•	3NF: remove transitive dependencies by splitting into relations so non-key attributes depend only on key.
+4. Final 3NF tables
+1.	STUDENT(stud_id PK, stud_name, dept_id FK)
+o	Sample rows: (101,'Asha',10), (102,'Vikram',10), (103,'Leena',20)
+2.	DEPARTMENT(dept_id PK, dept_name, hod_id FK)
+o	Sample rows: (10,'CSE',900), (20,'ECE',910)
+3.	HOD(hod_id PK, hod_name)
+o	Sample rows: (900,'Dr. Rao'), (910,'Dr. Menon')
+All attributes now depend only on their respective keys; no transitive dependencies remain.
+________________________________________
+Question 2 — Employee–Project Table
+Given table (example rows)
+EMP_PROJECT(emp_id, emp_name, proj_id, proj_name, client_id, client_name)
+
+Sample rows:
+(201,'Rita',301,'SearchApp',401,'Acme Corp')
+(202,'Sam',302,'ShopSite',402,'Retail Ltd')
+(201,'Rita',302,'ShopSite',402,'Retail Ltd')
+Functional Dependencies (given)
+•	emp_id → emp_name
+•	proj_id → proj_name, client_id
+•	client_id → client_name
+1. Primary key
+•	The relation records which employee works on which project. Natural composite key: (emp_id, proj_id) is the primary key (uniquely identifies a row).
+2. Violations of 3NF
+•	Non-key attributes emp_name, proj_name, client_id, client_name depend on parts of the composite key or transitively:
+o	emp_id → emp_name (partial dependency: emp_name depends only on emp_id, which is part of the composite PK)
+o	proj_id → proj_name, client_id (partial dependency)
+o	client_id → client_name (transitive dependency via proj_id)
+Thus the table is not in 2NF (because of partial dependencies) and not in 3NF (because of transitive dependency client_id → client_name).
+3. Normalize step-by-step to 3NF
+•	1NF: attributes atomic — holds.
+•	2NF: remove partial dependencies by creating separate tables for entities that are determined by part of the key.
+o	Create EMPLOYEE(emp_id PK, emp_name)
+o	Create PROJECT(proj_id PK, proj_name, client_id FK)
+o	Keep a relation that maps employees to projects: EMP_PROJ(emp_id FK, proj_id FK, PRIMARY KEY(emp_id,proj_id))
+•	3NF: remove transitive dependency client_id → client_name by creating CLIENT(client_id PK, client_name) and referencing it from PROJECT.
+4. Final tables
+1.	EMPLOYEE(emp_id PK, emp_name) — example (201,'Rita'), (202,'Sam')
+2.	CLIENT(client_id PK, client_name) — example (401,'Acme Corp'), (402,'Retail Ltd')
+3.	PROJECT(proj_id PK, proj_name, client_id FK) — example (301,'SearchApp',401), (302,'ShopSite',402)
+4.	EMP_PROJ(emp_id FK, proj_id FK, PRIMARY KEY(emp_id, proj_id)) — example (201,301), (202,302), (201,302)
+All non-key attributes now depend only on the keys of their relations; no partial or transitive dependencies remain.
+________________________________________
+Question 3 — Library Books Table
+Given table (example rows)
+LIBRARY(book_id, book_title, author_id, author_name, publisher_id, publisher_name)
+
+Sample rows:
+(501,'Algorithms',601,'Cormen',701,'MIT Press')
+(502,'Comp Networks',602,'Tanenbaum',702,'Prentice Hall')
+(503,'Algorithms',601,'Cormen',701,'MIT Press')
+1. All FDs
+•	book_id → book_title, author_id, publisher_id
+•	author_id → author_name
+•	publisher_id → publisher_name
+Additionally, in some catalogs a book may be authored by multiple authors — but for this exercise we assume a single author_id per book.
+2. Identify transitive dependencies
+•	book_id → author_id and author_id → author_name ⇒ book_id → author_name (transitive).
+•	book_id → publisher_id and publisher_id → publisher_name ⇒ book_id → publisher_name (transitive).
+3. Normalize to 3NF
+•	1NF: atomic attributes — holds.
+•	2NF: book_id is single attribute key — 2NF holds.
+•	3NF: remove transitive dependencies by creating separate AUTHOR and PUBLISHER relations.
+Final 3NF tables
+1.	BOOK(book_id PK, book_title, author_id FK, publisher_id FK)
+o	Example: (501,'Algorithms',601,701)
+2.	AUTHOR(author_id PK, author_name)
+o	Example: (601,'Cormen'), (602,'Tanenbaum')
+3.	PUBLISHER(publisher_id PK, publisher_name)
+o	Example: (701,'MIT Press'), (702,'Prentice Hall')
+If books may have multiple authors, we'd model a many-to-many with BOOK_AUTHOR(book_id FK, author_id FK) but that is outside the given FD set.
+________________________________________
+Question 4 — Sales Table
+Given table (example rows)
+SALES(sale_id, product_id, product_name, category, category_discount)
+
+Sample rows:
+(801,1001,'T-Shirt','Apparel',5)
+(802,1002,'Headphones','Electronics',10)
+(803,1001,'T-Shirt','Apparel',5)
+Functional Dependencies (given)
+•	sale_id → product_id
+•	product_id → product_name, category
+•	category → category_discount
+1. Identify transitive dependencies
+•	sale_id → product_id and product_id → category and category → category_discount ⇒ sale_id → category_discount (transitive via product_id and category). The non-key attribute category_discount is transitively dependent on sale_id through product_id and category.
+2. Normalize up to 3NF
+•	1NF: holds.
+•	2NF: PK is sale_id (single attribute) so 2NF holds.
+•	3NF: remove transitive dependency by splitting into PRODUCT and CATEGORY tables.
+3. Final schema (3NF)
+1.	SALE(sale_id PK, product_id FK, quantity?, sale_date?) — store direct sale facts. (We add optional attributes like quantity or sale_date as needed.)
+o	Example: (801,1001), (802,1002)
+2.	PRODUCT(product_id PK, product_name, category FK)
+o	Example: (1001,'T-Shirt','Apparel'), (1002,'Headphones','Electronics')
+3.	CATEGORY(category PK, category_discount)
+o	Example: ('Apparel',5), ('Electronics',10)
+Now category_discount depends only on CATEGORY, and product_name/category depend only on PRODUCT.
+________________________________________
+Question 5 — Student Course Enrollment
+Given table (example rows)
+ENROLL(roll_no, stud_name, course_id, course_name, credits)
+
+Sample rows:
+(11,'Neha', 'CS101','Intro CS',4)
+(12,'Rohit','MA101','Calculus',3)
+(11,'Neha','MA101','Calculus',3)
+Functional Dependencies (given)
+•	roll_no → stud_name
+•	course_id → course_name, credits
+1. Find partial dependencies
+•	The natural PK for enrollment is composite (roll_no, course_id) — one row per student-course pair.
+•	stud_name depends only on roll_no (partial dependency on part of composite PK).
+•	course_name, credits depend only on course_id (partial dependency on other part of composite PK).
+2. Normalize to 3NF
+•	2NF: remove partial dependencies by creating STUDENT and COURSE tables.
+•	3NF: remove transitive dependencies (none additional here) by ensuring COURSE holds course-specific attributes and STUDENT holds student-specific attributes.
+3. Final tables
+1.	STUDENT(roll_no PK, stud_name) — example (11,'Neha'), (12,'Rohit')
+2.	COURSE(course_id PK, course_name, credits) — example ('CS101','Intro CS',4), ('MA101','Calculus',3)
+3.	ENROLLMENT(roll_no FK, course_id FK, PRIMARY KEY(roll_no, course_id), grade?, semester?) — example (11,'CS101'), (11,'MA101'), (12,'MA101')
+This removes partial dependencies and leaves the many-to-many relation as the join table.
+________________________________________
+Part B – BCNF Practice Questions
+Question 6 — Course–Faculty Table
+Given table (example rows)
+COURSE_FACULTY(course_code, course_name, faculty_id, faculty_name, room_no)
+
+Sample rows:
+('CS101','Intro CS',801,'Dr. Silva',501)
+('MA201','Linear Algebra',802,'Dr. Kumar',502)
+('CS101','Intro CS',803,'Dr. Iyer',501)
+Functional Dependencies (given)
+•	course_code → course_name, faculty_id
+•	faculty_id → faculty_name, room_no
+•	room_no → faculty_id
+1. Check if table is in 3NF
+•	Determine candidate keys: we must find minimal keys. If course_code → faculty_id (single-valued), and faculty_id → room_no, plus room_no → faculty_id, we need to inspect.
+Assume interpretation: each course_code is assigned a faculty_id (one faculty per course), but the same room_no maps to exactly one faculty_id (room uniquely assigned to faculty), and a faculty_id has a single room_no. In that case:
+•	course_code → course_name, faculty_id
+•	faculty_id ↔ room_no (they determine one another)
+Candidate key(s): If course_code determines faculty_id and via that room_no, then course_code alone is a key for the whole relation. So PK = course_code.
+Does 3NF hold?
+•	Non-key attribute faculty_name depends on faculty_id, which is non-key but faculty_id itself is dependent on the key course_code. This is a transitive dependency: course_code → faculty_id → faculty_name.
+•	Similarly room_no depends on faculty_id. So 3NF is violated because non-prime attributes depend on non-key attributes.
+2. Identify BCNF violation
+•	BCNF requires for every FD X→Y, X must be a superkey. The FD faculty_id → room_no violates BCNF if faculty_id is not a superkey. If course_code is the key and faculty_id is not a key, then faculty_id → room_no violates BCNF. Also room_no → faculty_id may or may not violate depending on whether room_no is a key.
+3. Decompose into BCNF
+We need to decompose so that every determinant is a key in its relation.
+Possible decomposition:
+1.	FACULTY(faculty_id PK, faculty_name, room_no) — because faculty_id → faculty_name, room_no.
+2.	ROOM(room_no PK, faculty_id FK) — if room_no → faculty_id is meaningful (one-to-one). But since faculty_id↔room_no, we can keep room_no as attribute of FACULTY only; ROOM relation might be redundant.
+3.	COURSE(course_code PK, course_name, faculty_id FK) — course-specific info with FK to FACULTY.
+After decomposition:
+•	In FACULTY, determinant faculty_id is a key (BCNF holds).
+•	In COURSE, determinant course_code is key (BCNF holds).
+•	If room_no → faculty_id must be preserved separately, we might have ROOM(room_no PK, faculty_id FK) and maintain the one-to-one link.
+4. Final BCNF tables
+1.	FACULTY(faculty_id PK, faculty_name, room_no) — (801,'Dr. Silva',501)
+2.	COURSE(course_code PK, course_name, faculty_id FK) — ('CS101','Intro CS',801)
+3.	(Optional) ROOM(room_no PK, faculty_id FK) if room_no must be a first-class entity.
+This decomposition eliminates non-key determinants that violate BCNF.
+________________________________________
+Question 7 — Orders Table
+Given table (example rows)
+ORDERS(order_id, cust_id, cust_name, city, pincode)
+
+Sample rows:
+(9001,301,'A. Rao','Mumbai','400001')
+(9002,302,'M. Singh','Delhi','110001')
+(9003,301,'A. Rao','Mumbai','400001')
+Functional Dependencies (given)
+•	order_id → cust_id
+•	cust_id → cust_name, city
+•	city → pincode
+1. Check 2NF & 3NF
+•	PK likely order_id (single attribute) — 2NF holds.
+•	3NF: check transitive dependency: order_id → cust_id → city → pincode. pincode is transitively dependent on order_id. Also cust_name depends on cust_id (non-key attribute depends on non-key attribute). So the table is not in 3NF.
+2. Identify BCNF violations
+•	For BCNF, every FD's LHS must be a superkey. Here cust_id → cust_name, city violates BCNF if cust_id is not a key. Also city → pincode violates BCNF if city isn't a key.
+3. Convert to BCNF
+Decompose to relations where determinants are keys:
+1.	CUSTOMER(cust_id PK, cust_name, city) — because cust_id determines these.
+2.	CITY_PIN(city PK, pincode) — because city determines pincode.
+3.	ORDERS(order_id PK, cust_id FK, order_date?, amount?) — orders reference customer.
+Now:
+•	CUSTOMER has cust_id as key; cust_id→cust_name,city is acceptable (BCNF holds as cust_id is key).
+•	CITY_PIN has city as key (city→pincode OK).
+•	ORDERS has order_id as key and only foreign key cust_id.
+This removes BCNF violations and avoids redundancy in customer info.
+________________________________________
+Question 8 — Hostel Room Allocation
+Given table (example rows)
+HOSTEL(room_no, student_id, student_name, warden_id, warden_name)
+
+Sample rows:
+(101,401,'Ajay',701,'Mrs. Nair')
+(102,402,'Sita',702,'Mr. Paul')
+(103,403,'Ramesh',701,'Mrs. Nair')
+Functional Dependencies (given)
+•	student_id → student_name, room_no
+•	room_no → warden_id
+•	warden_id → warden_name
+1. Identify keys
+•	There are a few ways the mapping could be interpreted. If each student has exactly one room and room_no is unique per student, then student_id is a candidate key (it determines room_no and student_name). Alternatively, room_no might be unique and thus could be a key.
+Given student_id → room_no and implied uniqueness, student_id is a key. If room_no uniquely identifies student (one student per room), then room_no is also a key; the relation might have a 1-to-1 between student and room.
+2. Check 3NF
+•	There are transitive dependencies: student_id → room_no → warden_id → warden_name. So student_id determines warden_name transitively. This violates 3NF (non-key attribute warden_name depends on non-key attribute warden_id).
+3. Identify BCNF violations
+•	FD warden_id → warden_name violates BCNF if warden_id is not a superkey in the HOSTEL relation. Similarly room_no → warden_id violates BCNF if room_no isn't a key.
+4. Normalize to BCNF
+Decompose into:
+1.	STUDENT(student_id PK, student_name, room_no FK) — or ROOM(room_no PK, student_id FK) depending on which one you want as owner.
+2.	ROOM(room_no PK, warden_id FK) — room assigned a warden.
+3.	WARDEN(warden_id PK, warden_name)
+Example final tables:
+•	STUDENT: (401,'Ajay',101), (402,'Sita',102)
+•	ROOM: (101,701), (102,702)
+•	WARDEN: (701,'Mrs. Nair'), (702,'Mr. Paul')
+All FDs now have determinants that are keys in their tables; BCNF satisfied.
+
+
+------------------------------------------------------------
+  Question 9 – HOSPITAL Table 
+
+Table: HOSPITAL(hospital_id, hospital_name, city, state, doctor_id, doctor_name)
+
+  FDs: 1. hospital_id → hospital_name, city, state 2.
+  doctor_id → doctor_name 3. hospital_id, doctor_id → (full
+  row)
+
+  Candidate Key: - (hospital_id, doctor_id)
+
+  Decomposed BCNF Tables: 1. HOSPITAL_MAIN(hospital_id,
+  hospital_name, city, state) 2. DOCTOR(doctor_id,
+  doctor_name) 3. HOSPITAL_DOCTOR(hospital_id, doctor_id)
+
+  Example: Hospital: H1, “City Hospital”, Chennai, TN Doctor:
+  ------------------------------------------------------------
+
+Question 10 – CUSTOMER Table 
+
+Table: CUSTOMER(cust_id, cust_name, city, salesman_id, salesman_name, commission)
+
+FDs: 1. cust_id → cust_name, city, salesman_id
+2. salesman_id → salesman_name, commission
+3. salesman_id, cust_id → (full row)
+
+Candidate Key: - (cust_id)
+
+Problem: - Cust_id determines salesman_id
+- Salesman_id determines salesman_name, commission
+→ Transitive dependency → violates BCNF.
+
+BCNF Decomposition: 1. CUSTOMER_MAIN(cust_id, cust_name, city,
+salesman_id) 2. SALESMAN(salesman_id, salesman_name, commission)
+
+Example: Customer C5 → Raman, Bangalore, S2
+Salesman S2 → Karthik, 12%
+→ Store C5 in CUSTOMER_MAIN and S2 in SALESMAN.
